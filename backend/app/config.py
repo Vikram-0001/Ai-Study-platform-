@@ -13,6 +13,10 @@ class Settings(BaseSettings):
 
     # Supabase authentication secret (HS256)
     SUPABASE_JWT_SECRET: Optional[str] = None
+    SUPABASE_URL: Optional[str] = None
+    SUPABASE_ANON_KEY: Optional[str] = None
+    SUPABASE_SERVICE_ROLE_KEY: Optional[str] = None
+    SUPABASE_BUCKET: str = "study-files"
 
     # Vector DB (Default to ":memory:" for simple local startup, can be set to Qdrant server URL)
     QDRANT_URL: str = ":memory:"

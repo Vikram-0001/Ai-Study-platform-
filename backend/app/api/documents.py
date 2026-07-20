@@ -2,6 +2,7 @@ import os
 import shutil
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status, Query
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import get_current_user_payload
@@ -10,6 +11,7 @@ from app.schemas import DocumentResponse
 from app.services.parsing import document_parser
 from app.services.embedding import embedding_service
 from app.core.vector_store import vector_store
+from app.services.storage import storage_service
 
 router = APIRouter(prefix="/documents", tags=["Documents Management"])
 
@@ -73,6 +75,41 @@ async def upload_document(
             detail=f"Document parsing error: {e}"
         )
 
+    # If storage service is enabled, upload to Supabase and use the public URL
+    db_file_path = saved_file_path
+    if storage_service.enabled:
+        try:
+            with open(saved_file_path, "rb") as f_in:
+                file_bytes = f_in.read()
+            
+            # Map extension to mime type for upload content-type
+            media_types = {
+                "pdf": "application/pdf",
+                "txt": "text/plain",
+                "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                "png": "image/png",
+                "jpg": "image/jpeg",
+                "jpeg": "image/jpeg"
+            }
+            mime_type = media_types.get(file_ext.lower(), "application/octet-stream")
+            
+            public_url = await storage_service.upload_file(
+                file_name=file_uuid_name,
+                file_bytes=file_bytes,
+                mime_type=mime_type
+            )
+            
+            if public_url:
+                db_file_path = public_url
+                # Remove local file since it's uploaded to the cloud
+                if os.path.exists(saved_file_path):
+                    os.remove(saved_file_path)
+            else:
+                print("Warning: Supabase upload returned None. Falling back to local disk storage.")
+        except Exception as e:
+            print(f"Warning: Failed to upload file to Supabase: {e}. Falling back to local disk storage.")
+
     # Write document tracking entry to relational database
     db_doc = Document(
         name=file.filename,
@@ -84,7 +121,7 @@ async def upload_document(
         subject=subject,
         unit=unit,
         topic=topic,
-        file_path=saved_file_path,
+        file_path=db_file_path,
         file_type=file_ext,
         page_count=page_count
     )
@@ -155,13 +192,13 @@ def list_documents(
 
 
 @router.delete("/{doc_id}", status_code=status.HTTP_200_OK)
-def delete_document(
+async def delete_document(
     doc_id: int,
     db: Session = Depends(get_db),
     user_payload: dict = Depends(get_current_user_payload)
 ):
     """
-    Permanently deletes a document, its local file, and Qdrant vector index chunks.
+    Permanently deletes a document, its file (local or cloud), and Qdrant vector index chunks.
     """
     user_id = user_payload.get("id")
     user_role = user_payload.get("role")
@@ -186,12 +223,18 @@ def delete_document(
     except Exception as e:
         print(f"Warning: Failed deleting Qdrant points for doc {doc_id}: {e}")
 
-    # 2. Delete file from local uploads storage
-    if db_doc.file_path and os.path.exists(db_doc.file_path):
-        try:
-            os.remove(db_doc.file_path)
-        except Exception as e:
-            print(f"Warning: Failed deleting file from filesystem: {e}")
+    # 2. Delete file from cloud storage or local filesystem
+    if db_doc.file_path:
+        if db_doc.file_path.startswith("http://") or db_doc.file_path.startswith("https://"):
+            try:
+                await storage_service.delete_file(db_doc.file_path)
+            except Exception as e:
+                print(f"Warning: Failed deleting file from Supabase: {e}")
+        elif os.path.exists(db_doc.file_path):
+            try:
+                os.remove(db_doc.file_path)
+            except Exception as e:
+                print(f"Warning: Failed deleting file from filesystem: {e}")
 
     # 3. Delete database record
     db.delete(db_doc)
@@ -258,6 +301,10 @@ def download_document(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to view this file."
         )
+
+    # If file is stored online (e.g. Supabase), redirect to the public URL
+    if db_doc.file_path and (db_doc.file_path.startswith("http://") or db_doc.file_path.startswith("https://")):
+        return RedirectResponse(url=db_doc.file_path)
 
     if not db_doc.file_path or not os.path.exists(db_doc.file_path):
         raise HTTPException(

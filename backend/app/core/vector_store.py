@@ -31,9 +31,31 @@ class VectorStore:
                         distance=qmodels.Distance.COSINE
                     )
                 )
+            
+            # Ensure payload indexes exist for filtered fields (required by Qdrant Cloud)
+            self.client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="doc_id",
+                field_schema=qmodels.PayloadSchemaType.INTEGER
+            )
+            self.client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="owner_id",
+                field_schema=qmodels.PayloadSchemaType.INTEGER
+            )
+            self.client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="visibility",
+                field_schema=qmodels.PayloadSchemaType.KEYWORD
+            )
+            self.client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="status",
+                field_schema=qmodels.PayloadSchemaType.KEYWORD
+            )
         except Exception as e:
             # Handle potential connection issues or mock initialization
-            print(f"Warning: Failed to ensure collection exists: {e}")
+            print(f"Warning: Failed to ensure collection/indexes exist: {e}")
 
     def add_chunks(self, chunks: List[Dict[str, Any]], vectors: List[List[float]]):
         """
