@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none" className="w-full h-auto">
+  <!-- Ground & Accent Shapes -->
+  <ellipse cx="340" cy="435" rx="50" ry="15" fill="#7a1c2e" opacity="0.85"/>
+  <ellipse cx="490" cy="435" rx="55" ry="18" fill="#ea3829" opacity="0.9"/>
+  <line x1="200" y1="435" x2="600" y2="435" stroke="#333333" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Left Plants -->
+  <g stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M215 435 Q 200 390 195 380" fill="none"/>
+    <path d="M195 380 Q 185 390 188 400 Q 198 400 195 380 Z" fill="#ea3829"/>
+    <path d="M198 395 Q 210 395 208 405 Q 198 408 198 395 Z" fill="#ea3829"/>
+    <path d="M195 410 Q 182 412 185 422 Q 195 420 195 410 Z" fill="#ea3829"/>
+
+    <path d="M245 435 Q 240 375 235 365" fill="none"/>
+    <path d="M235 365 Q 225 375 228 385 Q 238 385 235 365 Z" fill="#ea3829"/>
+    <path d="M238 380 Q 250 380 248 390 Q 238 393 238 380 Z" fill="#ea3829"/>
+    <path d="M236 400 Q 223 402 226 412 Q 236 410 236 400 Z" fill="#ea3829"/>
+    <path d="M238 415 Q 250 415 247 425 Q 238 426 238 415 Z" fill="#ea3829"/>
+  </g>
+
+  <!-- Right Plants -->
+  <g stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M560 435 Q 565 375 570 365" fill="none"/>
+    <path d="M570 365 Q 580 375 577 385 Q 567 385 570 365 Z" fill="#ea3829"/>
+    <path d="M567 380 Q 555 380 557 390 Q 567 393 567 380 Z" fill="#ea3829"/>
+    <path d="M569 400 Q 582 402 579 412 Q 569 410 569 400 Z" fill="#ea3829"/>
+
+    <path d="M590 435 Q 595 390 600 380" fill="none"/>
+    <path d="M600 380 Q 610 390 607 400 Q 597 400 600 380 Z" fill="#ea3829"/>
+    <path d="M597 395 Q 585 395 587 405 Q 597 408 597 395 Z" fill="#ea3829"/>
+    <path d="M599 410 Q 612 412 609 422 Q 599 420 599 410 Z" fill="#ea3829"/>
+  </g>
+
+  <!-- Center Table -->
+  <g stroke="#333333" stroke-width="2" stroke-linecap="round">
+    <!-- Table Top -->
+    <path d="M335 305 L 455 305" fill="none"/>
+    <rect x="330" y="305" width="130" height="12" rx="4" fill="#ffffff"/>
+    <!-- Center Post -->
+    <line x1="395" y1="317" x2="395" y2="433" stroke-width="3"/>
+    <!-- Base -->
+    <path d="M365 435 L 425 435" stroke-width="4"/>
+  </g>
+
+  <!-- Laptop on Table -->
+  <g stroke="#333333" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Laptop Screen -->
+    <polygon points="375,250 418,250 428,295 375,295" fill="#ffffff"/>
+    <polygon points="380,255 414,255 422,290 380,290" fill="#ea3829" opacity="0.9"/>
+    <!-- Laptop Keyboard Base -->
+    <rect x="365" y="295" width="65" height="7" rx="2" fill="#ffffff"/>
+  </g>
+
+  <!-- Book Speech Bubble above Laptop -->
+  <g stroke="#333333" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Speech Bubble Outline -->
+    <path d="M385 160 C 385 145, 455 145, 455 160 C 455 175, 440 190, 415 190 C 400 190, 385 205, 385 205 C 385 205, 390 192, 385 190 C 370 185, 385 170, 385 160 Z" fill="#ffffff"/>
+    <!-- Book icon inside bubble -->
+    <path d="M405 162 C 413 158 418 160 420 162 C 422 160 427 158 435 162 L 435 180 C 427 176 422 178 420 180 C 418 178 413 176 405 180 Z" fill="#ffffff"/>
+    <line x1="420" y1="162" x2="420" y2="180"/>
+    <line x1="409" y1="167" x2="416" y2="164"/>
+    <line x1="409" y1="172" x2="416" y2="169"/>
+    <line x1="424" y1="164" x2="431" y2="167"/>
+    <line x1="424" y1="169" x2="431" y2="172"/>
+  </g>
+
+  <!-- Stools -->
+  <!-- Left Stool -->
+  <g stroke="#333333" stroke-width="2" stroke-linecap="round">
+    <ellipse cx="280" cy="360" rx="24" ry="5" fill="#ffffff"/>
+    <line x1="280" y1="365" x2="280" y2="435" stroke-width="2.5"/>
+    <line x1="265" y1="435" x2="295" y2="435"/>
+  </g>
+  <!-- Right Stool -->
+  <g stroke="#333333" stroke-width="2" stroke-linecap="round">
+    <ellipse cx="515" cy="365" rx="24" ry="5" fill="#ffffff"/>
+    <line x1="515" y1="370" x2="515" y2="435" stroke-width="2.5"/>
+    <line x1="500" y1="435" x2="530" y2="435"/>
+  </g>
+
+  <!-- Left Student (Female) -->
+  <g stroke="#333333" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Hair -->
+    <path d="M312 245 C 295 240, 255 255, 260 290 C 263 300, 275 305, 278 295 C 275 280, 290 250, 312 245 Z" fill="#333333"/>
+    <!-- Head -->
+    <circle cx="312" cy="245" r="14" fill="#ffffff"/>
+    <!-- Torso (Red shirt) -->
+    <path d="M305 258 C 300 270, 275 295, 272 320 C 285 325, 305 322, 312 320 L 315 275 Z" fill="#ea3829"/>
+    <!-- Arm reaching to laptop with pen -->
+    <path d="M312 265 Q 355 260 395 245" fill="none" stroke-width="3.5" stroke="#ea3829"/>
+    <line x1="392" y1="246" x2="400" y2="242" stroke-width="2" stroke="#333333"/>
+    <!-- Legs (White pants) -->
+    <path d="M280 320 Q 260 340 270 380 Q 285 385 320 380 L 330 420 L 348 420 L 335 370 Q 315 365 300 320 Z" fill="#ffffff"/>
+    <!-- Shoes -->
+    <ellipse cx="352" cy="422" rx="10" ry="4" fill="#ffffff"/>
+    <ellipse cx="325" cy="432" rx="10" ry="4" fill="#ffffff"/>
+  </g>
+
+  <!-- Right Student (Male) -->
+  <g stroke="#333333" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Head & Hair -->
+    <path d="M495 235 C 492 225, 510 225, 515 235 Z" fill="#333333"/>
+    <circle cx="503" cy="242" r="13" fill="#ffffff"/>
+    <!-- Torso (Red t-shirt) -->
+    <path d="M495 255 C 485 270, 480 300, 485 330 C 500 335, 525 335, 532 325 C 530 295, 515 265, 505 255 Z" fill="#ea3829"/>
+    <!-- Arm pointing at laptop -->
+    <path d="M495 268 Q 445 270 422 258" fill="none" stroke-width="3" stroke="#ea3829"/>
+    <path d="M425 258 L 415 256" stroke-width="2" stroke="#333333"/>
+    <!-- Legs (White pants) -->
+    <path d="M490 330 C 455 350 450 400 470 425 L 488 425 C 475 390 480 360 515 350 L 535 400 L 550 400 L 530 330 Z" fill="#ffffff"/>
+    <!-- Shoes -->
+    <ellipse cx="480" cy="427" rx="10" ry="4" fill="#ffffff"/>
+    <ellipse cx="548" cy="402" rx="9" ry="4" fill="#ffffff"/>
+  </g>
+</svg>
