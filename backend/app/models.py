@@ -26,8 +26,6 @@ class User(Base):
     bookmarks = relationship("Bookmark", back_populates="user", cascade="all, delete-orphan")
     chat_histories = relationship("ChatHistory", back_populates="user", cascade="all, delete-orphan")
     quizzes = relationship("Quiz", back_populates="user", cascade="all, delete-orphan")
-    flashcards = relationship("Flashcard", back_populates="user", cascade="all, delete-orphan")
-    study_plans = relationship("StudyPlan", back_populates="user", cascade="all, delete-orphan")
 
 
 class Document(Base):
@@ -101,27 +99,3 @@ class Quiz(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     user = relationship("User", back_populates="quizzes")
-
-
-class Flashcard(Base):
-    __tablename__ = "flashcards"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String(100), ForeignKey("users.id"), nullable=False)
-    deck_name = Column(String(255), nullable=False)
-    cards = Column(JSON, nullable=False)  # List of cards (front/back)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-
-    user = relationship("User", back_populates="flashcards")
-
-
-class StudyPlan(Base):
-    __tablename__ = "study_plans"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String(100), ForeignKey("users.id"), nullable=False)
-    topic = Column(String(255), nullable=False)
-    plan_data = Column(JSON, nullable=False)  # Structured schedule details
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-
-    user = relationship("User", back_populates="study_plans")

@@ -55,7 +55,7 @@ export default function Home() {
   // --- STUDY GENERATORS STATE ---
   const [generatorTopic, setGeneratorTopic] = useState("");
   const [selectedDocId, setSelectedDocId] = useState<string>("");
-  const [studyToolTab, setStudyToolTab] = useState<"quiz" | "viva" | "revision" | "planner" | "pyq">("quiz");
+  const [studyToolTab, setStudyToolTab] = useState<"quiz" | "viva">("quiz");
   const [generatedOutput, setGeneratedOutput] = useState<any>(null);
   const [quizResponses, setQuizResponses] = useState<Record<number, string>>({});
   const [showQuizExplanations, setShowQuizExplanations] = useState<Record<number, boolean>>({});
@@ -436,6 +436,22 @@ export default function Home() {
     }
   };
 
+  const handleDeleteStudent = async (userId: string, username: string) => {
+    if (!confirm(`Are you sure you want to permanently delete the student account "${username}"? This will delete all of their uploaded documents, chat history, quizzes, and other personal data from the database.`)) {
+      return;
+    }
+    setIsProcessing(true);
+    try {
+      await api.admin.deleteStudent(userId);
+      alert(`Student account "${username}" has been successfully deleted.`);
+      fetchAdminStudents();
+    } catch (err: any) {
+      alert(`Error deleting student: ${err.message}`);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   // --- ACTIONS: STUDY TOOL GENERATION ---
   const handleGenerateStudyTool = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -458,15 +474,6 @@ export default function Home() {
       } else if (studyToolTab === "viva") {
         const data = await api.study.generateViva(reqPayload);
         setGeneratedOutput(data);
-      } else if (studyToolTab === "revision") {
-        const data = await api.study.generateRevision(reqPayload);
-        setGeneratedOutput(data);
-      } else if (studyToolTab === "planner") {
-        const data = await api.study.generatePlanner(reqPayload);
-        setGeneratedOutput(data);
-      } else if (studyToolTab === "pyq") {
-        const data = await api.study.analyzePYQs(reqPayload);
-        setGeneratedOutput(data);
       }
     } catch (err: any) {
       alert(`Generation failed: ${err.message}`);
@@ -480,13 +487,6 @@ export default function Home() {
     try {
       if (studyToolTab === "quiz") {
         await api.study.saveQuiz(generatedOutput);
-      } else if (studyToolTab === "revision") {
-        await api.study.saveFlashcardDeck({
-          deck_name: generatorTopic,
-          cards: generatedOutput.notes
-        });
-      } else if (studyToolTab === "planner") {
-        await api.study.saveStudyPlan(generatedOutput);
       }
       alert("Academic asset saved to dashboard successfully!");
     } catch (err: any) {
@@ -1326,24 +1326,6 @@ export default function Home() {
                 >
                   Viva Q&A Cards
                 </button>
-                <button 
-                  onClick={() => setStudyToolTab("revision")}
-                  className={`pb-2.5 transition-all cursor-pointer ${studyToolTab === "revision" ? "text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)]" : "hover:text-[var(--text-primary)]"}`}
-                >
-                  Revision & Cheat Sheets
-                </button>
-                <button 
-                  onClick={() => setStudyToolTab("planner")}
-                  className={`pb-2.5 transition-all cursor-pointer ${studyToolTab === "planner" ? "text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)]" : "hover:text-[var(--text-primary)]"}`}
-                >
-                  Roadmap Planner
-                </button>
-                <button 
-                  onClick={() => setStudyToolTab("pyq")}
-                  className={`pb-2.5 transition-all cursor-pointer ${studyToolTab === "pyq" ? "text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)]" : "hover:text-[var(--text-primary)]"}`}
-                >
-                  PYQ Exam Trends
-                </button>
               </div>
             </div>
 
@@ -1356,7 +1338,7 @@ export default function Home() {
                   <h3 className="font-serif-heading font-bold text-base text-[var(--text-heading)]">
                     Generated {studyToolTab} deck
                   </h3>
-                  {["quiz", "revision", "planner"].includes(studyToolTab) && (
+                  {studyToolTab === "quiz" && (
                     <button 
                       onClick={saveGeneratedAsset}
                       className="px-4 py-2 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-accent)] text-[var(--accent-gold)] font-serif-heading font-bold hover:bg-[var(--accent-gold)] hover:text-white text-xs flex items-center space-x-1.5 transition-all cursor-pointer"
@@ -1473,104 +1455,7 @@ export default function Home() {
                   </div>
                 )}
 
-                {/* Sub Tab Output: 3. REVISION */}
-                {studyToolTab === "revision" && (
-                  <div key="tab-revision" className="animate-zoom-scroll space-y-6 font-academic-subheading">
-                    <div className="p-5 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-accent)] text-xs leading-relaxed text-[var(--text-secondary)]">
-                      <span className="font-serif-heading font-bold text-[var(--accent-gold)] block text-base mb-1">Topic Summary Overview</span>
-                      {generatedOutput.summary}
-                    </div>
 
-                    <div className="p-4 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-color)] text-xs font-mono whitespace-pre-wrap leading-relaxed text-[var(--text-primary)]">
-                      <span className="font-serif-heading font-bold text-[var(--text-heading)] block text-sm mb-2 font-sans">Quick-Reference Cheat Sheet</span>
-                      {generatedOutput.cheat_sheet}
-                    </div>
-
-                    <div className="space-y-4">
-                      <h4 className="font-serif-heading font-bold text-[var(--text-heading)] text-sm uppercase tracking-wider">Subtopic Learning Notes</h4>
-                      {generatedOutput.notes?.map((n: any, idx: number) => (
-                        <div key={idx} className="p-4 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-color)] text-xs leading-relaxed">
-                          <span className="font-serif-heading font-bold text-[var(--text-primary)] block text-sm mb-1">{n.topic}</span>
-                          <p className="text-[var(--text-secondary)]">{n.details}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Sub Tab Output: 4. ROADMAP PLANNER */}
-                {studyToolTab === "planner" && (
-                  <div key="tab-planner" className="animate-zoom-scroll space-y-6 font-academic-subheading">
-                    <h4 className="font-serif-heading text-lg font-bold text-[var(--text-heading)]"> Master Schedule: {generatedOutput.topic}</h4>
-                    <div className="relative border-l border-[var(--border-accent)] ml-4 pl-6 space-y-6 text-xs">
-                      {generatedOutput.plan_data?.map((p: any, idx: number) => (
-                        <div key={idx} className="relative">
-                          {/* Timeline dot */}
-                          <div className="absolute -left-[31px] top-1 h-4 w-4 rounded-full bg-[var(--accent-gold)] border-2 border-[var(--bg-main)] flex items-center justify-center">
-                            <Check className="w-2.5 h-2.5 text-white" />
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <div className="font-serif-heading font-bold text-base text-[var(--accent-gold)]">{p.day}: {p.objective}</div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
-                              {p.tasks?.map((t: string, tIdx: number) => (
-                                <div key={tIdx} className="p-3 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-color)] flex items-center space-x-2 text-[var(--text-primary)]">
-                                  <input type="checkbox" className="rounded border-[var(--border-color)]" />
-                                  <span>{t}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Sub Tab Output: 5. PYQ ANALYSIS */}
-                {studyToolTab === "pyq" && (
-                  <div key="tab-pyq" className="animate-zoom-scroll grid grid-cols-1 md:grid-cols-2 gap-6 font-academic-subheading">
-                    {/* Repeated Qs */}
-                    <div className="space-y-4">
-                      <h4 className="font-serif-heading font-bold text-xs uppercase tracking-wider text-[var(--accent-gold)] flex items-center space-x-2">
-                        <TrendingUp className="w-4 h-4 text-[var(--accent-gold)]" />
-                        <span>Repeated Exam Questions</span>
-                      </h4>
-                      <div className="space-y-2">
-                        {generatedOutput.repeated_questions?.map((q: any, idx: number) => (
-                          <div key={idx} className="p-4 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-color)] text-xs space-y-1.5">
-                            <p className="font-semibold text-[var(--text-primary)]">{q.question}</p>
-                            <div className="flex items-center justify-between text-[var(--accent-gold)] text-[10px] font-academic-subheading">
-                              <span>Frequency: {q.frequency}</span>
-                              <span className="font-bold text-[var(--accent-gold)]">Weightage: {q.weightage}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Predictions */}
-                    <div className="space-y-4">
-                      <h4 className="font-serif-heading font-bold text-xs uppercase tracking-wider text-[var(--accent-gold)] flex items-center space-x-2">
-                        <CheckCircle className="w-4 h-4 text-[var(--accent-gold)]" />
-                        <span>Topic Probability Forecasts</span>
-                      </h4>
-                      <div className="space-y-2">
-                        {generatedOutput.important_topics?.map((t: any, idx: number) => (
-                          <div key={idx} className="p-4 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-color)] text-xs flex justify-between items-start">
-                            <div>
-                              <p className="font-semibold text-[var(--text-primary)]">{t.topic}</p>
-                              <p className="text-[10px] text-[var(--accent-gold)] mt-1 font-academic-subheading">Trend: {t.difficulty_trend}</p>
-                            </div>
-                            <span className="px-2.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 font-bold text-[10px]">
-                              {t.probability}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>
@@ -1765,12 +1650,13 @@ export default function Home() {
                     <th className="py-3 px-4">Username</th>
                     <th className="py-3 px-4">Email Address</th>
                     <th className="py-3 px-4">Registration Date</th>
+                    <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-color)]">
                   {adminStudents.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="py-8 text-center text-[var(--text-muted)] font-academic-subheading">
+                      <td colSpan={5} className="py-8 text-center text-[var(--text-muted)] font-academic-subheading">
                         No students registered.
                       </td>
                     </tr>
@@ -1781,6 +1667,17 @@ export default function Home() {
                       <td className="py-3.5 px-4 font-semibold text-[var(--text-primary)] font-academic-subheading">{stud.username}</td>
                       <td className="py-3.5 px-4">{stud.email}</td>
                       <td className="py-3.5 px-4">{new Date(stud.created_at).toLocaleDateString()}</td>
+                      <td className="py-3.5 px-4 text-right">
+                        <button
+                          onClick={() => handleDeleteStudent(stud.id, stud.username)}
+                          disabled={isProcessing}
+                          className="p-1.5 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all cursor-pointer inline-flex items-center space-x-1.5 hover-scale disabled:opacity-50"
+                          title="Delete Account"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span className="text-[10px] font-bold">Delete</span>
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

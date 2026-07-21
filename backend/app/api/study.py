@@ -3,14 +3,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import get_current_user_payload
-from app.models import Quiz, Flashcard, StudyPlan
-from app.schemas import QuizRequest, VivaRequest, RevisionRequest, PlannerRequest, PYQRequest
+from app.models import Quiz
+from app.schemas import QuizRequest, VivaRequest
 from app.agents.retrieval_agent import retrieval_agent
 from app.agents.quiz_agent import quiz_agent
 from app.agents.viva_agent import viva_agent
-from app.agents.revision_agent import revision_agent
-from app.agents.study_planner_agent import study_planner_agent
-from app.agents.pyq_agent import pyq_agent
 
 router = APIRouter(prefix="/study", tags=["Study Assets & Generators"])
 
@@ -52,31 +49,6 @@ def generate_viva_cards(
     return viva_agent.generate_viva(payload.topic, context)
 
 
-@router.post("/revision/generate")
-def generate_revision_pack(
-    payload: RevisionRequest,
-    user_payload: dict = Depends(get_current_user_payload)
-):
-    context = _get_context_for_generation(payload.topic, payload.document_id, user_payload)
-    return revision_agent.generate_revision_notes(payload.topic, context)
-
-
-@router.post("/planner/generate")
-def generate_study_roadmap(
-    payload: PlannerRequest,
-    user_payload: dict = Depends(get_current_user_payload)
-):
-    context = _get_context_for_generation(payload.topic, payload.document_id, user_payload)
-    return study_planner_agent.create_study_plan(payload.topic, context)
-
-
-@router.post("/pyq/analyze")
-def analyze_previous_year_papers(
-    payload: PYQRequest,
-    user_payload: dict = Depends(get_current_user_payload)
-):
-    context = _get_context_for_generation(payload.topic, payload.document_id, user_payload)
-    return pyq_agent.analyze_pyqs(payload.topic, context)
 
 
 # --- PERSISTENCE STORE FOR GENERATED ITEMS ---
@@ -107,56 +79,3 @@ def list_saved_quizzes(
     user_id = user_payload.get("id")
     return db.query(Quiz).filter(Quiz.user_id == user_id).all()
 
-
-# Flashcards (Save Deck)
-@router.post("/flashcards", status_code=status.HTTP_201_CREATED)
-def save_flashcards_deck(
-    payload: dict,
-    db: Session = Depends(get_db),
-    user_payload: dict = Depends(get_current_user_payload)
-):
-    user_id = user_payload.get("id")
-    deck = Flashcard(
-        user_id=user_id,
-        deck_name=payload.get("deck_name", "Saved Deck"),
-        cards=payload.get("cards", [])
-    )
-    db.add(deck)
-    db.commit()
-    db.refresh(deck)
-    return deck
-
-@router.get("/flashcards")
-def list_saved_flashcards(
-    db: Session = Depends(get_db),
-    user_payload: dict = Depends(get_current_user_payload)
-):
-    user_id = user_payload.get("id")
-    return db.query(Flashcard).filter(Flashcard.user_id == user_id).all()
-
-
-# Study Plans
-@router.post("/planner", status_code=status.HTTP_201_CREATED)
-def save_study_plan(
-    payload: dict,
-    db: Session = Depends(get_db),
-    user_payload: dict = Depends(get_current_user_payload)
-):
-    user_id = user_payload.get("id")
-    plan = StudyPlan(
-        user_id=user_id,
-        topic=payload.get("topic", "Saved Roadmap"),
-        plan_data=payload.get("plan_data", [])
-    )
-    db.add(plan)
-    db.commit()
-    db.refresh(plan)
-    return plan
-
-@router.get("/planner")
-def list_saved_plans(
-    db: Session = Depends(get_db),
-    user_payload: dict = Depends(get_current_user_payload)
-):
-    user_id = user_payload.get("id")
-    return db.query(StudyPlan).filter(StudyPlan.user_id == user_id).all()

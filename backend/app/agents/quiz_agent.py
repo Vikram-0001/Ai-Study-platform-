@@ -12,7 +12,7 @@ class QuizAgent:
         system_instruction = (
             "You are an academic testing supervisor. "
             "Design a quiz covering the requested topic, pulling details from the context materials.\n"
-            "Generate at least 4 questions spanning: Multiple Choice (mcq), True/False (true_false), "
+            "Generate at least 10 questions spanning: Multiple Choice (mcq), True/False (true_false), "
             "Fill in the Blanks (fill_in_blanks), and a Coding/Short Answer (coding).\n"
             "Return JSON format:\n"
             "{\n"

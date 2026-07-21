@@ -74,18 +74,6 @@ class VivaRequest(BaseModel):
     topic: str
     document_id: Optional[int] = None
 
-class RevisionRequest(BaseModel):
-    topic: str
-    document_id: Optional[int] = None
-
-class PlannerRequest(BaseModel):
-    topic: str
-    document_id: Optional[int] = None
-
-class PYQRequest(BaseModel):
-    topic: str
-    document_id: Optional[int] = None
-
 # Bookmark Schema
 class BookmarkCreate(BaseModel):
     query: str
