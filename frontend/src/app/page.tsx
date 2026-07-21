@@ -1003,7 +1003,7 @@ export default function Home() {
                       </div>
                     )}
 
-                    <div className="prose prose-stone max-w-none whitespace-pre-wrap leading-relaxed font-academic-subheading text-sm text-[var(--text-primary)]">
+                    <div className={`prose max-w-none whitespace-pre-wrap leading-relaxed font-academic-subheading text-sm ${msg.role === "user" ? "text-white prose-invert" : "text-[var(--text-primary)] prose-stone"}`}>
                       {msg.text}
                     </div>
 
