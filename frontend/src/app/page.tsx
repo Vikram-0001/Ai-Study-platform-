@@ -330,6 +330,16 @@ export default function Home() {
     }
   };
 
+  const handleDeleteStudent = async (userId: string) => {
+    if (!confirm("Are you sure you want to remove this student account? This will permanently delete all of their uploaded files and vector records.")) return;
+    try {
+      await api.admin.deleteStudent(userId);
+      fetchAdminStudents();
+    } catch (err: any) {
+      alert(`Failed to delete student: ${err.message}`);
+    }
+  };
+
   const handleOpenDocument = (docId: number) => {
     const token = localStorage.getItem("token") || "";
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -1102,6 +1112,7 @@ export default function Home() {
                   <thead>
                     <tr className="border-b border-white/5 text-zinc-500 uppercase tracking-wider font-bold">
                       <th className="py-3 px-4">Document Name</th>
+                      <th className="py-3 px-4">Uploader</th>
                       <th className="py-3 px-4">Visibility</th>
                       <th className="py-3 px-4">Subject</th>
                       <th className="py-3 px-4">Semester</th>
@@ -1113,7 +1124,7 @@ export default function Home() {
                   <tbody className="divide-y divide-white/5">
                     {documents.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="py-8 text-center text-zinc-500">
+                        <td colSpan={8} className="py-8 text-center text-zinc-500">
                           No indexed documents in target library.
                         </td>
                       </tr>
@@ -1123,6 +1134,9 @@ export default function Home() {
                         <td className="py-3.5 px-4 font-semibold text-white flex items-center space-x-2">
                           <FileText className="w-4 h-4 text-zinc-500 shrink-0" />
                           <span className="truncate max-w-[200px]">{doc.name}</span>
+                        </td>
+                        <td className="py-3.5 px-4 font-semibold text-zinc-400">
+                          {doc.uploader_role === "admin" ? "Admin" : (doc.uploader_username || "Student")}
                         </td>
                         <td className="py-3.5 px-4">
                           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
@@ -1570,6 +1584,7 @@ export default function Home() {
                 <thead>
                   <tr className="border-b border-white/5 text-zinc-500 uppercase tracking-wider font-bold">
                     <th className="py-3 px-4">Document Title</th>
+                    <th className="py-3 px-4">Submitted By</th>
                     <th className="py-3 px-4">Subject Target</th>
                     <th className="py-3 px-4">Semester</th>
                     <th className="py-3 px-4">Submitted Date</th>
@@ -1579,7 +1594,7 @@ export default function Home() {
                 <tbody className="divide-y divide-white/5">
                   {adminQueue.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="py-8 text-center text-zinc-500">
+                      <td colSpan={6} className="py-8 text-center text-zinc-500">
                         All student submissions processed. Queue is currently empty.
                       </td>
                     </tr>
@@ -1589,6 +1604,9 @@ export default function Home() {
                       <td className="py-3.5 px-4 font-semibold text-white flex items-center space-x-2">
                         <FileText className="w-4 h-4 text-zinc-400" />
                         <span>{item.name}</span>
+                      </td>
+                      <td className="py-3.5 px-4 font-semibold text-zinc-400">
+                        {item.uploader_username || "Student"}
                       </td>
                       <td className="py-3.5 px-4 font-semibold text-zinc-400">{item.subject || "—"}</td>
                       <td className="py-3.5 px-4">{item.semester || "—"}</td>

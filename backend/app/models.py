@@ -2,6 +2,7 @@ import datetime
 import uuid
 import time
 import random
+from typing import Optional
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, JSON, Boolean
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -51,6 +52,14 @@ class Document(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     owner = relationship("User", back_populates="documents")
+
+    @property
+    def uploader_username(self) -> Optional[str]:
+        return self.owner.username if self.owner else None
+
+    @property
+    def uploader_role(self) -> Optional[str]:
+        return self.owner.role if self.owner else None
 
 
 class Bookmark(Base):

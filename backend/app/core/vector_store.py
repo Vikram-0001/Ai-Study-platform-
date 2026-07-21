@@ -41,7 +41,7 @@ class VectorStore:
             self.client.create_payload_index(
                 collection_name=self.collection_name,
                 field_name="owner_id",
-                field_schema=qmodels.PayloadSchemaType.INTEGER
+                field_schema=qmodels.PayloadSchemaType.KEYWORD
             )
             self.client.create_payload_index(
                 collection_name=self.collection_name,
@@ -51,6 +51,37 @@ class VectorStore:
             self.client.create_payload_index(
                 collection_name=self.collection_name,
                 field_name="status",
+                field_schema=qmodels.PayloadSchemaType.KEYWORD
+            )
+            self.client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="text",
+                field_schema=qmodels.PayloadSchemaType.TEXT
+            )
+            # Custom search filters (required for Strict Mode in Qdrant Cloud)
+            self.client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="department",
+                field_schema=qmodels.PayloadSchemaType.KEYWORD
+            )
+            self.client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="semester",
+                field_schema=qmodels.PayloadSchemaType.INTEGER
+            )
+            self.client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="subject",
+                field_schema=qmodels.PayloadSchemaType.KEYWORD
+            )
+            self.client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="unit",
+                field_schema=qmodels.PayloadSchemaType.KEYWORD
+            )
+            self.client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="topic",
                 field_schema=qmodels.PayloadSchemaType.KEYWORD
             )
         except Exception as e:
