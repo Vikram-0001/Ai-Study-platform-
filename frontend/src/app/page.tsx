@@ -1193,6 +1193,7 @@ export default function Home() {
                     <tr className="border-b border-[var(--border-color)] text-[var(--accent-gold)] uppercase tracking-wider font-bold font-serif-heading">
                       <th className="py-3 px-4">Document Name</th>
                       <th className="py-3 px-4">Visibility</th>
+                      <th className="py-3 px-4">Uploaded By</th>
                       <th className="py-3 px-4">Subject</th>
                       <th className="py-3 px-4">Semester</th>
                       <th className="py-3 px-4">Pages</th>
@@ -1203,7 +1204,7 @@ export default function Home() {
                   <tbody className="divide-y divide-[var(--border-color)]">
                     {documents.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="py-8 text-center text-[var(--text-muted)]">
+                        <td colSpan={8} className="py-8 text-center text-[var(--text-muted)]">
                           No indexed documents in target library.
                         </td>
                       </tr>
@@ -1222,6 +1223,16 @@ export default function Home() {
                             {doc.visibility}
                           </span>
                         </td>
+                        <td className="py-3.5 px-4">
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-[var(--text-primary)]">{doc.uploader_username || "System"}</span>
+                            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
+                              doc.uploader_role === "admin" ? "text-[var(--accent-gold)]" : "text-slate-400"
+                            }`}>
+                              {doc.uploader_role || "admin"}
+                            </span>
+                          </div>
+                        </td>
                         <td className="py-3.5 px-4 font-semibold text-[var(--text-secondary)]">{doc.subject || "—"}</td>
                         <td className="py-3.5 px-4">{doc.semester || "—"}</td>
                         <td className="py-3.5 px-4">{doc.page_count}</td>
@@ -1233,17 +1244,16 @@ export default function Home() {
                             {doc.status}
                           </span>
                         </td>
-                        <td className="py-3.5 px-4">
-                          {user?.role === "student" ? (
-                            <button 
-                              onClick={() => handleOpenDocument(doc.id)}
-                              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border border-[var(--border-accent)] hover:bg-[var(--accent-gold)] hover:text-white transition-all cursor-pointer shadow-xs font-serif-heading"
-                              title="Open Document"
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                              <span className="font-bold text-xs">Open</span>
-                            </button>
-                          ) : (
+                        <td className="py-3.5 px-4 flex items-center space-x-2">
+                          <button 
+                            onClick={() => handleOpenDocument(doc.id)}
+                            className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border border-[var(--border-accent)] hover:bg-[var(--accent-gold)] hover:text-white transition-all cursor-pointer shadow-xs font-serif-heading"
+                            title="Open Document"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span className="font-bold text-xs">Open</span>
+                          </button>
+                          {user?.role === "admin" && (
                             <button 
                               onClick={() => handleDeleteDocument(doc.id)}
                               className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 transition-all cursor-pointer"
@@ -1545,6 +1555,7 @@ export default function Home() {
                 <thead>
                   <tr className="border-b border-[var(--border-color)] text-[var(--accent-gold)] uppercase tracking-wider font-bold font-serif-heading">
                     <th className="py-3 px-4">Document Title</th>
+                    <th className="py-3 px-4">Submitted By</th>
                     <th className="py-3 px-4">Subject Target</th>
                     <th className="py-3 px-4">Semester</th>
                     <th className="py-3 px-4">Submitted Date</th>
@@ -1554,7 +1565,7 @@ export default function Home() {
                 <tbody className="divide-y divide-[var(--border-color)]">
                   {adminQueue.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="py-8 text-center text-[var(--text-muted)] font-academic-subheading">
+                      <td colSpan={6} className="py-8 text-center text-[var(--text-muted)] font-academic-subheading">
                         All student submissions processed. Queue is currently empty.
                       </td>
                     </tr>
@@ -1565,10 +1576,28 @@ export default function Home() {
                         <FileText className="w-4 h-4 text-[var(--accent-gold)]" />
                         <span>{item.name}</span>
                       </td>
+                      <td className="py-3.5 px-4">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-[var(--text-primary)]">{item.uploader_username || "System"}</span>
+                          <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
+                            item.uploader_role === "admin" ? "text-[var(--accent-gold)]" : "text-slate-400"
+                          }`}>
+                            {item.uploader_role || "student"}
+                          </span>
+                        </div>
+                      </td>
                       <td className="py-3.5 px-4 font-semibold text-[var(--text-secondary)]">{item.subject || "—"}</td>
                       <td className="py-3.5 px-4">{item.semester || "—"}</td>
                       <td className="py-3.5 px-4">{new Date(item.created_at).toLocaleDateString()}</td>
                       <td className="py-3.5 px-4 flex items-center space-x-2">
+                        <button 
+                          onClick={() => handleOpenDocument(item.id)}
+                          className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border border-[var(--border-accent)] hover:bg-[var(--accent-gold)] hover:text-white transition-all cursor-pointer shadow-xs font-serif-heading text-[11px] font-bold"
+                          title="Open Document"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Open</span>
+                        </button>
                         <button 
                           onClick={() => handleApproveReject(item.id, "approve")}
                           className="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 font-serif-heading font-bold hover:bg-emerald-500/20 transition-all text-[11px] cursor-pointer"
