@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -7,6 +8,7 @@ from app.schemas import DocumentResponse, DocumentApproval
 from app.services.parsing import document_parser
 from app.services.embedding import embedding_service
 from app.core.vector_store import vector_store
+from app.services.storage import storage_service
 
 router = APIRouter(prefix="/admin", tags=["Admin Portal Functions"])
 
@@ -172,3 +174,51 @@ def get_students_list(
             "created_at": s.created_at
         } for s in students
     ]
+
+
+@router.delete("/students/{user_id}", status_code=status.HTTP_200_OK)
+async def delete_student_account(
+    user_id: str,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_admin_user)
+):
+    """
+    Deletes a student account and all of their uploaded documents/data.
+    """
+    user = db.query(User).filter(User.id == user_id, User.role == "student").first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student account not found."
+        )
+
+    # 1. Clean up student's uploaded documents (files and Qdrant vector chunks)
+    user_docs = db.query(Document).filter(Document.owner_id == user_id).all()
+    for doc in user_docs:
+        # Delete Qdrant vector embeddings
+        try:
+            vector_store.delete_document_chunks(doc.id)
+        except Exception as e:
+            print(f"Warning: Failed to delete Qdrant chunks for doc {doc.id} when deleting user: {e}")
+            
+        # Delete storage files (local or Supabase)
+        if doc.file_path:
+            if doc.file_path.startswith("http://") or doc.file_path.startswith("https://"):
+                try:
+                    await storage_service.delete_file(doc.file_path)
+                except Exception as e:
+                    print(f"Warning: Failed deleting file from Supabase: {e}")
+            elif os.path.exists(doc.file_path):
+                try:
+                    os.remove(doc.file_path)
+                except Exception as e:
+                    print(f"Warning: Failed deleting file from filesystem: {e}")
+        
+        # Delete document record
+        db.delete(doc)
+
+    # 2. Delete the user (cascades bookmarks, chat_history, quizzes, flashcards, study_plans)
+    db.delete(user)
+    db.commit()
+    
+    return {"detail": f"Student account {user_id} and all associated files/vectors deleted successfully."}

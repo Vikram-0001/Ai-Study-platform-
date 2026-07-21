@@ -34,6 +34,8 @@ class DocumentResponse(BaseModel):
     file_type: Optional[str] = None
     page_count: int
     created_at: datetime
+    uploader_username: Optional[str] = None
+    uploader_role: Optional[str] = None
 
     class Config:
         from_attributes = True

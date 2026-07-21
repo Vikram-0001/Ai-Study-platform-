@@ -255,6 +255,13 @@ export const api = {
         headers: getHeaders()
       });
       return handleResponse(res);
+    },
+    async deleteStudent(userId: string) {
+      const res = await fetch(`${API_BASE_URL}/admin/students/${userId}`, {
+        method: "DELETE",
+        headers: getHeaders()
+      });
+      return handleResponse(res);
     }
   }
 };
