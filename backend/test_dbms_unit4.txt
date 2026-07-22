@@ -1,0 +1,2 @@
+DBMS Unit 4 Lecture notes.
+This document covers database transactions, ACID properties, isolation levels, and concurrency control.

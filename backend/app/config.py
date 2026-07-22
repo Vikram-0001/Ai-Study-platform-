@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     # AI API keys
     GROQ_API_KEY: Optional[str] = None
     TAVILY_API_KEY: Optional[str] = None
+    HF_TOKEN: Optional[str] = None
 
     # Security configuration
     ENABLE_SECURITY_GUARDRAILS: bool = True

@@ -22,20 +22,39 @@ class EmbeddingService:
         if cached:
             return cached
 
-        # 2. Call OpenAI or Mock
-        if self.client:
+        # 2. Call HuggingFace Serverless API if token is configured
+        if settings.HF_TOKEN:
             try:
-                response = self.client.embeddings.create(
-                    input=[text],
-                    model="text-embedding-3-small"
-                )
-                vector = response.data[0].embedding
-                # Cache results
-                cache_manager.set_embedding(text, vector)
-                return vector
+                import httpx
+                api_url = "https://router.huggingface.co/hf-inference/models/BAAI/bge-small-en-v1.5"
+                headers = {"Authorization": f"Bearer {settings.HF_TOKEN}"}
+                
+                with httpx.Client() as client:
+                    response = client.post(
+                        api_url,
+                        headers=headers,
+                        json={"inputs": text, "options": {"wait_for_model": True}},
+                        timeout=15.0
+                    )
+                    if response.status_code == 200:
+                        vector = response.json()
+                        if isinstance(vector, list) and len(vector) > 0:
+                            # Flatten if nested list
+                            if isinstance(vector[0], list):
+                                vector = vector[0]
+                            # Pad vector to 1536 dimensions for compatibility
+                            if len(vector) < 1536:
+                                vector = vector + [0.0] * (1536 - len(vector))
+                            elif len(vector) > 1536:
+                                vector = vector[:1536]
+                            
+                            cache_manager.set_embedding(text, vector)
+                            return vector
+                    else:
+                        print(f"HuggingFace embedding API returned status {response.status_code}: {response.text}")
             except Exception as e:
-                print(f"OpenAI embedding call failed: {e}. Falling back to mock embeddings.")
-        
+                print(f"HuggingFace embedding API call failed: {e}. Falling back to mock embeddings.")
+
         # 3. Deterministic Mock Fallback
         vector = self._generate_mock_embedding(text)
         cache_manager.set_embedding(text, vector)
