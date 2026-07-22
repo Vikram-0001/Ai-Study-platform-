@@ -58,6 +58,7 @@ class Citation(BaseModel):
     subject: Optional[str] = None
     unit: Optional[str] = None
     topic: Optional[str] = None
+    url: Optional[str] = None
 
 class ChatResponse(BaseModel):
     answer: str

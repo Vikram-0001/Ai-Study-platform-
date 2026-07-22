@@ -9,12 +9,19 @@ from app.agents.reasoning_agent import reasoning_agent
 from app.agents.verification_agent import verification_agent
 
 class AgentOrchestrator:
-    async def tavily_search(self, query: str) -> str:
+    async def tavily_search(self, query: str) -> dict:
         """
         Fallback web search when local vector resources are insufficient (CRAG pipeline).
         """
+        default_res = {
+            "context": "Web search failed to load relevant results.",
+            "results": []
+        }
         if not settings.TAVILY_API_KEY:
-            return "Web search is currently offline (TAVILY_API_KEY not configured)."
+            return {
+                "context": "Web search is currently offline (TAVILY_API_KEY not configured).",
+                "results": []
+            }
         
         try:
             async with httpx.AsyncClient() as client:
@@ -31,16 +38,32 @@ class AgentOrchestrator:
                 if response.status_code == 200:
                     data = response.json()
                     answer = data.get("answer")
-                    if answer:
-                        return answer
-                    # Build from raw results
                     results = data.get("results", [])
+                    
+                    # Prepare results with URLs
+                    formatted_results = []
+                    for r in results:
+                        formatted_results.append({
+                            "title": r.get("title", "Web Search Source"),
+                            "url": r.get("url", ""),
+                            "content": r.get("content", "")
+                        })
+                    
+                    if answer:
+                        return {
+                            "context": answer,
+                            "results": formatted_results
+                        }
+                    # Build from raw results
                     snippets = [r.get("content", "") for r in results[:3]]
-                    return "\n".join(snippets)
+                    return {
+                        "context": "\n".join(snippets),
+                        "results": formatted_results
+                    }
         except Exception as e:
             print(f"Tavily web search failed: {e}")
             
-        return "Web search failed to load relevant results."
+        return default_res
 
     async def execute_query(
         self,
@@ -77,13 +100,29 @@ class AgentOrchestrator:
         intent_label = classification.get("intent", "factual")
 
         # 5. Retrieve local chunks matching RBAC permissions
-        retrieved_chunks = retrieval_agent.retrieve_context(
+        raw_chunks = retrieval_agent.retrieve_context(
             query=scrubbed_query,
             user_id=user_id,
             role=role,
             limit=5,
             filters=filters
         )
+
+        # Filter chunks to keep only relevant ones (handling mock embeddings and general query fallbacks)
+        stop_words = {"what", "is", "a", "the", "an", "and", "or", "in", "on", "at", "to", "for", "of", "with", "who", "where", "how", "why", "which", "this", "that", "these", "those"}
+        query_words = [w.strip("?,.!") for w in scrubbed_query.lower().split()]
+        query_keywords = {w for w in query_words if w and w not in stop_words}
+        if not query_keywords:
+            query_keywords = set(query_words)
+            
+        retrieved_chunks = []
+        for chunk in raw_chunks:
+            # High cosine similarity (real embeddings) OR keyword match
+            vector_score = chunk.get("score", 0.0)
+            chunk_text = chunk.get("text", "").lower()
+            is_relevant = (vector_score >= 0.35) or any(word in chunk_text for word in query_keywords)
+            if is_relevant:
+                retrieved_chunks.append(chunk)
 
         final_answer = ""
         citations = []
@@ -99,7 +138,8 @@ class AgentOrchestrator:
                 "visibility": chunk.get("visibility"),
                 "subject": chunk.get("subject"),
                 "unit": chunk.get("unit"),
-                "topic": chunk.get("topic")
+                "topic": chunk.get("topic"),
+                "url": None
             })
 
         # --- ROUTING DECISION ENGINE ---
@@ -117,9 +157,24 @@ class AgentOrchestrator:
                 final_answer = compiled_text
             else:
                 # Fallback to Tavily if no local chunks are available
-                web_result = await self.tavily_search(scrubbed_query)
+                search_res = await self.tavily_search(scrubbed_query)
+                web_result = search_res.get("context", "")
+                results = search_res.get("results", [])
+                
                 final_answer = f"### Web Search Fallback Answer\n\n{web_result}\n\n*Note: No matches were found inside the official, personal, or community database. Web search was engaged.*"
                 pipeline_decision = "retrieval_web_fallback"
+                
+                for r_idx, res in enumerate(results[:3]):
+                    citations.append({
+                        "source_index": r_idx + 1,
+                        "document_name": f"Web: {res.get('title', 'Tavily Search')}",
+                        "page": 1,
+                        "visibility": "web",
+                        "subject": "General",
+                        "unit": "Search",
+                        "topic": "Search Fallback",
+                        "url": res.get("url")
+                    })
         else:
             # LLM REASONING PATH
             pipeline_decision = "llm_reasoning"
@@ -135,7 +190,9 @@ class AgentOrchestrator:
                 # Corrective RAG (CRAG) logic: If grounding confidence is low, pull web search and regenerate
                 if grounding_score < 0.6:
                     print(f"Grounding score low ({grounding_score}). Running Tavily Web Search...")
-                    web_context = await self.tavily_search(scrubbed_query)
+                    search_res = await self.tavily_search(scrubbed_query)
+                    web_context = search_res.get("context", "")
+                    results = search_res.get("results", [])
                     
                     # Merge context and regenerate
                     web_chunk = {
@@ -147,35 +204,68 @@ class AgentOrchestrator:
                     final_answer = reasoning_agent.synthesize_answer(scrubbed_query, augmented_chunks)
                     
                     # Add web search metadata to citations
-                    citations.append({
-                        "source_index": len(augmented_chunks),
-                        "document_name": "Web Search (Tavily)",
-                        "page": 1,
-                        "visibility": "web",
-                        "subject": "General",
-                        "unit": "Search",
-                        "topic": "Search Fallback"
-                    })
+                    base_idx = len(retrieved_chunks)
+                    if results:
+                        for r_idx, res in enumerate(results[:3]):
+                            citations.append({
+                                "source_index": base_idx + r_idx + 1,
+                                "document_name": f"Web: {res.get('title', 'Tavily Search')}",
+                                "page": 1,
+                                "visibility": "web",
+                                "subject": "General",
+                                "unit": "Search",
+                                "topic": "Search Fallback",
+                                "url": res.get("url")
+                            })
+                    else:
+                        citations.append({
+                            "source_index": base_idx + 1,
+                            "document_name": "Web Search (Tavily)",
+                            "page": 1,
+                            "visibility": "web",
+                            "subject": "General",
+                            "unit": "Search",
+                            "topic": "Search Fallback",
+                            "url": None
+                        })
                     pipeline_decision = "llm_reasoning_crag"
                     grounding_score = 0.8
             else:
                 # Direct Tavily Search and Reasoning without local DB
-                web_context = await self.tavily_search(scrubbed_query)
+                search_res = await self.tavily_search(scrubbed_query)
+                web_context = search_res.get("context", "")
+                results = search_res.get("results", [])
+                
                 web_chunk = {
                     "name": "Web Search Fallback",
                     "page_number": 1,
                     "text": web_context
                 }
                 final_answer = reasoning_agent.synthesize_answer(scrubbed_query, [web_chunk])
-                citations.append({
-                    "source_index": 1,
-                    "document_name": "Web Search (Tavily)",
-                    "page": 1,
-                    "visibility": "web",
-                    "subject": "General",
-                    "unit": "Search",
-                    "topic": "Search Fallback"
-                })
+                
+                if results:
+                    for r_idx, res in enumerate(results[:3]):
+                        citations.append({
+                            "source_index": r_idx + 1,
+                            "document_name": f"Web: {res.get('title', 'Tavily Search')}",
+                            "page": 1,
+                            "visibility": "web",
+                            "subject": "General",
+                            "unit": "Search",
+                            "topic": "Search Fallback",
+                            "url": res.get("url")
+                        })
+                else:
+                    citations.append({
+                        "source_index": 1,
+                        "document_name": "Web Search (Tavily)",
+                        "page": 1,
+                        "visibility": "web",
+                        "subject": "General",
+                        "unit": "Search",
+                        "topic": "Search Fallback",
+                        "url": None
+                    })
                 pipeline_decision = "llm_reasoning_only_web"
 
         # 6. Save payload to answer cache

@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { 
-  BookOpen, MessageSquare, UploadCloud, CheckCircle, AlertCircle, 
-  Trash2, Bookmark, History, BarChart2, Plus, Send, Users, Check, 
-  HelpCircle, FileText, Calendar, TrendingUp, LogOut, Lock, Unlock, 
+import {
+  BookOpen, MessageSquare, UploadCloud, CheckCircle, AlertCircle,
+  Trash2, Bookmark, History, BarChart2, Plus, Send, Users, Check,
+  HelpCircle, FileText, Calendar, TrendingUp, LogOut, Lock, Unlock,
   Globe, RefreshCw, ChevronRight, Eye, ShieldAlert, Sparkles, BookMarked,
   Sun, Moon
 } from "lucide-react";
@@ -139,7 +139,7 @@ export default function Home() {
             }
           });
           if (error) throw error;
-          
+
           const sessionToken = data.session?.access_token;
           if (sessionToken) {
             const syncRes = await api.auth.sync(sessionToken);
@@ -157,7 +157,7 @@ export default function Home() {
             password: passwordInput
           });
           if (error) throw error;
-          
+
           const sessionToken = data.session?.access_token;
           if (sessionToken) {
             const syncRes = await api.auth.sync(sessionToken);
@@ -518,7 +518,7 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl space-y-8 academic-card-glow p-10 md:p-16 border border-[var(--border-accent)] hero-text-fade">
           {/* Theme Toggle Button */}
           <div className="absolute top-6 right-6">
-            <button 
+            <button
               type="button"
               onClick={() => {
                 const current = document.documentElement.getAttribute("data-theme") || "dark";
@@ -536,9 +536,9 @@ export default function Home() {
 
           {/* Centered Vector Illustration */}
           <div className="flex justify-center my-2 hover-scale">
-            <img 
-              src="/study-illustration.svg" 
-              alt="Academic Study Assistant Illustration" 
+            <img
+              src="/study-illustration.svg"
+              alt="Academic Study Assistant Illustration"
               className="w-56 sm:w-64 md:w-80 h-auto object-contain filter drop-shadow-md"
             />
           </div>
@@ -563,7 +563,7 @@ export default function Home() {
               <h3 className="font-serif-heading text-lg font-bold text-[var(--text-heading)] mb-1">RAG-First Execution</h3>
               <p className="text-[var(--text-secondary)] text-sm font-academic-subheading">Direct factual definition requests execute zero LLM calls, saving API resources.</p>
             </div>
-            
+
             <div className="p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface-subtle)] hover-lift">
               <div className="w-10 h-10 rounded-lg bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] flex items-center justify-center mb-3">
                 <BookOpen className="w-5 h-5" />
@@ -582,13 +582,13 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <button 
+            <button
               onClick={() => setAuthMode("login")}
               className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[var(--accent-maroon)] text-white font-bold hover:bg-[var(--accent-maroon-hover)] border border-[var(--border-accent)] font-serif-heading transition-all shadow-md cursor-pointer hover-scale"
             >
               Get Started Dashboard
             </button>
-            <a 
+            <a
               href="#learn-more"
               onClick={() => alert("Enterprise RAG study platform designed for university students. Admins publish syllabus, students upload notes (private/community).")}
               className="w-full sm:w-auto px-8 py-3.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold font-academic-subheading hover:border-[var(--accent-gold)] transition-all cursor-pointer hover-scale"
@@ -610,9 +610,9 @@ export default function Home() {
         <div className="relative z-10 w-full max-w-md academic-card p-8 rounded-3xl space-y-6 border border-[var(--border-color)]">
           {/* Centered Study Illustration & Platform Title */}
           <div className="flex flex-col items-center text-center pb-2 border-b border-[var(--border-color)]">
-            <img 
-              src="/study-illustration.svg" 
-              alt="Academic Study Assistant Illustration" 
+            <img
+              src="/study-illustration.svg"
+              alt="Academic Study Assistant Illustration"
               className="w-48 h-auto object-contain mb-3 drop-shadow-md hover-scale"
             />
             <h1 className="text-sm uppercase tracking-wider font-serif-heading font-bold text-[var(--accent-gold)]">
@@ -630,7 +630,7 @@ export default function Home() {
               </p>
             </div>
 
-            <button 
+            <button
               type="button"
               onClick={() => {
                 const current = document.documentElement.getAttribute("data-theme") || "dark";
@@ -657,8 +657,8 @@ export default function Home() {
             {authMode === "signup" && (
               <div>
                 <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Username</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={usernameInput}
                   onChange={(e) => setUsernameInput(e.target.value)}
                   className="w-full px-4 py-2.5 academic-input text-sm"
@@ -670,8 +670,8 @@ export default function Home() {
 
             <div>
               <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Email Address / Username</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
                 className="w-full px-4 py-2.5 academic-input text-sm"
@@ -682,8 +682,8 @@ export default function Home() {
 
             <div>
               <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Secret Password</label>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
                 className="w-full px-4 py-2.5 academic-input text-sm"
@@ -692,7 +692,7 @@ export default function Home() {
               />
             </div>
 
-            <button 
+            <button
               type="submit"
               disabled={isProcessing}
               className="w-full py-3 rounded-xl bg-[var(--accent-maroon)] hover:bg-[var(--accent-maroon-hover)] text-white font-serif-heading font-bold border border-[var(--border-accent)] transition-all flex items-center justify-center space-x-2 shadow-md cursor-pointer disabled:opacity-50"
@@ -703,7 +703,7 @@ export default function Home() {
           </form>
 
           <div className="text-center pt-2">
-            <button 
+            <button
               onClick={() => {
                 setErrorMsg("");
                 setAuthMode(authMode === "login" ? "signup" : "login");
@@ -741,7 +741,7 @@ export default function Home() {
           <nav className="p-4 space-y-1.5">
             {user?.role === "student" && (
               <>
-                <button 
+                <button
                   onClick={() => setActiveView("chat")}
                   className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-academic-subheading font-medium transition-all cursor-pointer ${activeView === "chat" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border-l-4 border-[var(--accent-gold)] font-bold shadow-xs" : "text-slate-300 hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold-subtle)]"}`}
                 >
@@ -749,7 +749,7 @@ export default function Home() {
                   <span>AI Chat RAG</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveView("documents")}
                   className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-academic-subheading font-medium transition-all cursor-pointer ${activeView === "documents" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border-l-4 border-[var(--accent-gold)] font-bold shadow-xs" : "text-slate-300 hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold-subtle)]"}`}
                 >
@@ -757,7 +757,7 @@ export default function Home() {
                   <span>Personal Library</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveView("study_generators")}
                   className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-academic-subheading font-medium transition-all cursor-pointer ${activeView === "study_generators" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border-l-4 border-[var(--accent-gold)] font-bold shadow-xs" : "text-slate-300 hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold-subtle)]"}`}
                 >
@@ -765,7 +765,7 @@ export default function Home() {
                   <span>AI Study Tools</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveView("bookmarks")}
                   className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-academic-subheading font-medium transition-all cursor-pointer ${activeView === "bookmarks" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border-l-4 border-[var(--accent-gold)] font-bold shadow-xs" : "text-slate-300 hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold-subtle)]"}`}
                 >
@@ -773,7 +773,7 @@ export default function Home() {
                   <span>Bookmarks</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveView("history")}
                   className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-academic-subheading font-medium transition-all cursor-pointer ${activeView === "history" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border-l-4 border-[var(--accent-gold)] font-bold shadow-xs" : "text-slate-300 hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold-subtle)]"}`}
                 >
@@ -785,7 +785,7 @@ export default function Home() {
 
             {user?.role === "admin" && (
               <>
-                <button 
+                <button
                   onClick={() => setActiveView("admin_queue")}
                   className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-academic-subheading font-medium transition-all cursor-pointer ${activeView === "admin_queue" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border-l-4 border-[var(--accent-gold)] font-bold shadow-xs" : "text-slate-300 hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold-subtle)]"}`}
                 >
@@ -793,7 +793,7 @@ export default function Home() {
                   <span>Approval Queue</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveView("admin_docs")}
                   className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-academic-subheading font-medium transition-all cursor-pointer ${activeView === "admin_docs" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border-l-4 border-[var(--accent-gold)] font-bold shadow-xs" : "text-slate-300 hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold-subtle)]"}`}
                 >
@@ -801,7 +801,7 @@ export default function Home() {
                   <span>Official Library</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveView("chat")}
                   className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-academic-subheading font-medium transition-all cursor-pointer ${activeView === "chat" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border-l-4 border-[var(--accent-gold)] font-bold shadow-xs" : "text-slate-300 hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold-subtle)]"}`}
                 >
@@ -809,7 +809,7 @@ export default function Home() {
                   <span>RAG Testing Sandbox</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveView("admin_analytics")}
                   className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-academic-subheading font-medium transition-all cursor-pointer ${activeView === "admin_analytics" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border-l-4 border-[var(--accent-gold)] font-bold shadow-xs" : "text-slate-300 hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold-subtle)]"}`}
                 >
@@ -817,7 +817,7 @@ export default function Home() {
                   <span>System Analytics</span>
                 </button>
 
-                <button 
+                <button
                   onClick={() => setActiveView("admin_students")}
                   className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-academic-subheading font-medium transition-all cursor-pointer ${activeView === "admin_students" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border-l-4 border-[var(--accent-gold)] font-bold shadow-xs" : "text-slate-300 hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold-subtle)]"}`}
                 >
@@ -840,7 +840,7 @@ export default function Home() {
           </div>
 
           <div className="flex items-center space-x-2">
-            <button 
+            <button
               onClick={handleLogout}
               className="flex-1 flex items-center justify-center space-x-2 py-2 rounded-xl text-xs text-red-300 bg-red-950/40 hover:bg-red-900/50 font-bold transition-all border border-red-800/40 cursor-pointer font-academic-subheading"
             >
@@ -848,7 +848,7 @@ export default function Home() {
               <span>Logout</span>
             </button>
 
-            <button 
+            <button
               type="button"
               onClick={() => {
                 const current = document.documentElement.getAttribute("data-theme") || "dark";
@@ -871,7 +871,7 @@ export default function Home() {
         {/* Ambient Background Glow matching Login Page */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--accent-gold)] rounded-full blur-[160px] opacity-10 pointer-events-none animate-glow"></div>
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[var(--accent-maroon)] rounded-full blur-[160px] opacity-10 pointer-events-none"></div>
-        
+
         {/* HEADER BAR */}
         <header className="flex items-center justify-between pb-6 border-b border-[var(--border-color)] mb-6 shrink-0">
           <div>
@@ -887,7 +887,7 @@ export default function Home() {
               <span>Datastore: SQLite + Qdrant</span>
             </div>
 
-            <button 
+            <button
               type="button"
               onClick={() => {
                 const current = document.documentElement.getAttribute("data-theme") || "dark";
@@ -919,8 +919,8 @@ export default function Home() {
             {/* Top Filter and Info Bar */}
             <div className="p-4 border-b border-[var(--border-color)] bg-[var(--bg-surface-subtle)] flex flex-wrap items-center justify-between gap-3 text-xs font-academic-subheading">
               <div className="flex flex-wrap items-center gap-2">
-                <select 
-                  value={filterDept} 
+                <select
+                  value={filterDept}
                   onChange={(e) => setFilterDept(e.target.value)}
                   className="px-3 py-1.5 academic-input text-xs font-academic-subheading font-medium text-[var(--text-primary)]"
                 >
@@ -929,23 +929,23 @@ export default function Home() {
                   <option value="ECE">ECE</option>
                   <option value="ME">ME</option>
                 </select>
-                <input 
-                  type="number" 
-                  value={filterSem} 
+                <input
+                  type="number"
+                  value={filterSem}
                   onChange={(e) => setFilterSem(e.target.value)}
                   placeholder="Sem"
                   className="w-16 px-3 py-1.5 academic-input text-xs font-academic-subheading text-[var(--text-primary)]"
                 />
-                <input 
-                  type="text" 
-                  value={filterSubject} 
+                <input
+                  type="text"
+                  value={filterSubject}
                   onChange={(e) => setFilterSubject(e.target.value)}
                   placeholder="Subject (e.g. DBMS)"
                   className="px-3 py-1.5 academic-input text-xs font-academic-subheading text-[var(--text-primary)]"
                 />
-                <input 
-                  type="text" 
-                  value={filterUnit} 
+                <input
+                  type="text"
+                  value={filterUnit}
                   onChange={(e) => setFilterUnit(e.target.value)}
                   placeholder="Unit"
                   className="w-16 px-3 py-1.5 academic-input text-xs font-academic-subheading text-[var(--text-primary)]"
@@ -953,7 +953,7 @@ export default function Home() {
               </div>
 
               <div className="flex items-center space-x-2">
-                <select 
+                <select
                   value={activeSession}
                   onChange={(e) => setActiveSession(e.target.value)}
                   className="px-3 py-1.5 academic-input text-xs font-academic-subheading text-[var(--text-primary)]"
@@ -961,7 +961,7 @@ export default function Home() {
                   <option value="default_session">Default Session</option>
                   {sessions.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <button 
+                <button
                   onClick={createNewChatSession}
                   className="px-3.5 py-1.5 rounded-xl bg-[var(--accent-maroon)] hover:bg-[var(--accent-maroon-hover)] font-serif-heading font-bold text-white flex items-center space-x-1 border border-[var(--border-accent)] transition-all cursor-pointer shadow-sm text-xs"
                 >
@@ -988,7 +988,7 @@ export default function Home() {
               {chatMessages.map((msg, idx) => (
                 <div key={idx} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}>
                   <div className={`max-w-[80%] rounded-2xl p-4 text-sm shadow-sm ${msg.role === "user" ? "bg-[var(--accent-maroon)] text-white rounded-tr-none border border-[var(--border-accent)] font-academic-subheading" : "bg-[var(--bg-surface-subtle)] border border-[var(--border-color)] text-[var(--text-primary)] rounded-tl-none font-academic-subheading"}`}>
-                    
+
                     {/* Badge showing LLM Decision Engine path */}
                     {msg.role === "assistant" && (
                       <div className="flex items-center space-x-2 mb-2 pb-1 border-b border-[var(--border-color)]">
@@ -1031,7 +1031,7 @@ export default function Home() {
                   {/* Message Action Controls */}
                   {msg.role === "assistant" && (
                     <div className="flex items-center space-x-3 mt-1.5 px-2">
-                      <button 
+                      <button
                         onClick={() => handleBookmarkAnswer(msg)}
                         className="text-[10px] font-semibold text-[var(--accent-gold)] hover:underline flex items-center space-x-1 cursor-pointer transition-colors font-academic-subheading"
                       >
@@ -1047,14 +1047,14 @@ export default function Home() {
 
             {/* Chat Input Field */}
             <form onSubmit={handleSendQuery} className="p-4 border-t border-[var(--border-color)] bg-[var(--bg-surface-subtle)] flex items-center space-x-2 font-academic-subheading">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={queryText}
                 onChange={(e) => setQueryText(e.target.value)}
                 placeholder="Ask your Academic Study Assistant..."
                 className="flex-1 px-4 py-3 academic-input text-sm font-academic-subheading placeholder:font-academic-subheading placeholder:text-[var(--text-muted)]"
               />
-              <button 
+              <button
                 type="submit"
                 disabled={isProcessing}
                 className="p-3 rounded-xl bg-[var(--accent-maroon)] hover:bg-[var(--accent-maroon-hover)] text-[var(--accent-gold)] font-bold border border-[var(--border-accent)] disabled:opacity-50 transition-all cursor-pointer shadow-sm"
@@ -1068,7 +1068,7 @@ export default function Home() {
         {/* VIEW 2: PERSONAL/OFFICIAL DOCUMENT LIBRARY */}
         {(activeView === "documents" || activeView === "admin_docs") && (
           <div key={`view-${activeView}`} className="view-transition space-y-6 font-academic-subheading">
-            
+
             {/* Upload Portal Widget */}
             <div className="academic-card p-6 rounded-2xl">
               <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--accent-gold)] mb-4 flex items-center space-x-2 font-serif-heading">
@@ -1080,8 +1080,8 @@ export default function Home() {
                 <div className="md:col-span-3">
                   <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Select Academic File (PDF, PPTX, DOCX, TXT)</label>
                   <div className="border-2 border-dashed border-[var(--border-color)] hover:border-[var(--accent-gold)] rounded-xl p-5 flex flex-col items-center justify-center bg-[var(--bg-surface-subtle)] transition-all cursor-pointer relative">
-                    <input 
-                      type="file" 
+                    <input
+                      type="file"
                       onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
                       className="absolute inset-0 opacity-0 cursor-pointer"
                       required
@@ -1095,7 +1095,7 @@ export default function Home() {
 
                 <div>
                   <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Visibility Mode</label>
-                  <select 
+                  <select
                     value={uploadVisibility}
                     onChange={(e) => setUploadVisibility(e.target.value)}
                     disabled={user?.role === "admin"}
@@ -1114,8 +1114,8 @@ export default function Home() {
 
                 <div>
                   <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Department Target</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={uploadDept}
                     onChange={(e) => setUploadDept(e.target.value)}
                     placeholder="E.g. CSE"
@@ -1125,8 +1125,8 @@ export default function Home() {
 
                 <div>
                   <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Semester</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={uploadSem}
                     onChange={(e) => setUploadSem(e.target.value)}
                     placeholder="E.g. 4"
@@ -1136,8 +1136,8 @@ export default function Home() {
 
                 <div>
                   <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Subject Tag</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={uploadSubject}
                     onChange={(e) => setUploadSubject(e.target.value)}
                     placeholder="E.g. Operating Systems"
@@ -1147,8 +1147,8 @@ export default function Home() {
 
                 <div>
                   <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Unit</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={uploadUnit}
                     onChange={(e) => setUploadUnit(e.target.value)}
                     placeholder="E.g. Unit 3"
@@ -1158,8 +1158,8 @@ export default function Home() {
 
                 <div>
                   <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Topic Target</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={uploadTopic}
                     onChange={(e) => setUploadTopic(e.target.value)}
                     placeholder="E.g. Process Scheduling"
@@ -1169,7 +1169,7 @@ export default function Home() {
 
                 <div className="md:col-span-3 flex items-center justify-between pt-2">
                   <div className="text-xs text-[var(--accent-gold)] font-semibold font-academic-subheading">{uploadProgress}</div>
-                  <button 
+                  <button
                     type="submit"
                     disabled={isProcessing || !uploadFile}
                     className="px-6 py-2.5 rounded-xl bg-[var(--accent-maroon)] hover:bg-[var(--accent-maroon-hover)] font-serif-heading font-bold text-white border border-[var(--border-accent)] disabled:opacity-50 transition-all cursor-pointer shadow-sm text-xs"
@@ -1216,19 +1216,17 @@ export default function Home() {
                           <span className="truncate max-w-[200px]">{doc.name}</span>
                         </td>
                         <td className="py-3.5 px-4">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            doc.visibility === "global" ? "bg-cyan-500/10 text-cyan-600 border border-cyan-500/20" :
-                            doc.visibility === "community" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border border-[var(--border-accent)]" : "bg-stone-500/10 text-stone-600 border border-stone-500/20"
-                          }`}>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${doc.visibility === "global" ? "bg-cyan-500/10 text-cyan-600 border border-cyan-500/20" :
+                              doc.visibility === "community" ? "bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border border-[var(--border-accent)]" : "bg-stone-500/10 text-stone-600 border border-stone-500/20"
+                            }`}>
                             {doc.visibility}
                           </span>
                         </td>
                         <td className="py-3.5 px-4">
                           <div className="flex flex-col">
                             <span className="font-semibold text-[var(--text-primary)]">{doc.uploader_username || "System"}</span>
-                            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
-                              doc.uploader_role === "admin" ? "text-[var(--accent-gold)]" : "text-slate-400"
-                            }`}>
+                            <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${doc.uploader_role === "admin" ? "text-[var(--accent-gold)]" : "text-slate-400"
+                              }`}>
                               {doc.uploader_role || "admin"}
                             </span>
                           </div>
@@ -1237,15 +1235,14 @@ export default function Home() {
                         <td className="py-3.5 px-4">{doc.semester || "—"}</td>
                         <td className="py-3.5 px-4">{doc.page_count}</td>
                         <td className="py-3.5 px-4">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            doc.status === "approved" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
-                            doc.status === "pending_approval" ? "bg-amber-500/10 text-amber-600 border border-amber-500/20" : "bg-red-500/10 text-red-600 border border-red-500/20"
-                          }`}>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${doc.status === "approved" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
+                              doc.status === "pending_approval" ? "bg-amber-500/10 text-amber-600 border border-amber-500/20" : "bg-red-500/10 text-red-600 border border-red-500/20"
+                            }`}>
                             {doc.status}
                           </span>
                         </td>
                         <td className="py-3.5 px-4 flex items-center space-x-2">
-                          <button 
+                          <button
                             onClick={() => handleOpenDocument(doc.id)}
                             className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border border-[var(--border-accent)] hover:bg-[var(--accent-gold)] hover:text-white transition-all cursor-pointer shadow-xs font-serif-heading"
                             title="Open Document"
@@ -1254,7 +1251,7 @@ export default function Home() {
                             <span className="font-bold text-xs">Open</span>
                           </button>
                           {user?.role === "admin" && (
-                            <button 
+                            <button
                               onClick={() => handleDeleteDocument(doc.id)}
                               className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 transition-all cursor-pointer"
                               title="Delete Document"
@@ -1275,7 +1272,7 @@ export default function Home() {
         {/* VIEW 3: AI STUDY TOOLS */}
         {activeView === "study_generators" && (
           <div key="view-study_generators" className="view-transition space-y-6 font-academic-subheading">
-            
+
             {/* Control Panel Widget */}
             <div className="academic-card p-6 rounded-2xl">
               <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--accent-gold)] mb-4 flex items-center space-x-2 font-serif-heading">
@@ -1286,8 +1283,8 @@ export default function Home() {
               <form onSubmit={handleGenerateStudyTool} className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Target Topic or Concept</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={generatorTopic}
                     onChange={(e) => setGeneratorTopic(e.target.value)}
                     placeholder="E.g., Binary Search Algorithm, Deadlock conditions..."
@@ -1298,7 +1295,7 @@ export default function Home() {
 
                 <div>
                   <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Optional File Scope</label>
-                  <select 
+                  <select
                     value={selectedDocId}
                     onChange={(e) => setSelectedDocId(e.target.value)}
                     className="w-full px-3 py-2.5 academic-input text-xs font-academic-subheading"
@@ -1311,7 +1308,7 @@ export default function Home() {
                 </div>
 
                 <div className="flex items-end">
-                  <button 
+                  <button
                     type="submit"
                     disabled={isProcessing || !generatorTopic}
                     className="w-full py-3 rounded-xl bg-[var(--accent-maroon)] hover:bg-[var(--accent-maroon-hover)] text-white font-serif-heading font-bold border border-[var(--border-accent)] disabled:opacity-50 transition-all text-xs flex items-center justify-center space-x-2 cursor-pointer shadow-sm"
@@ -1324,13 +1321,13 @@ export default function Home() {
 
               {/* Study Tool Tabs Selection */}
               <div className="flex border-b border-[var(--border-color)] mt-6 gap-6 text-xs font-bold text-[var(--text-muted)] font-serif-heading">
-                <button 
+                <button
                   onClick={() => setStudyToolTab("quiz")}
                   className={`pb-2.5 transition-all cursor-pointer ${studyToolTab === "quiz" ? "text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)]" : "hover:text-[var(--text-primary)]"}`}
                 >
                   Interactive Quiz
                 </button>
-                <button 
+                <button
                   onClick={() => setStudyToolTab("viva")}
                   className={`pb-2.5 transition-all cursor-pointer ${studyToolTab === "viva" ? "text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)]" : "hover:text-[var(--text-primary)]"}`}
                 >
@@ -1342,14 +1339,14 @@ export default function Home() {
             {/* Generated Output Area */}
             {generatedOutput && (
               <div className="academic-card p-6 rounded-2xl space-y-6">
-                
+
                 {/* Save Header Action */}
                 <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-4">
                   <h3 className="font-serif-heading font-bold text-base text-[var(--text-heading)]">
                     Generated {studyToolTab} deck
                   </h3>
                   {studyToolTab === "quiz" && (
-                    <button 
+                    <button
                       onClick={saveGeneratedAsset}
                       className="px-4 py-2 rounded-xl bg-[var(--bg-surface-subtle)] border border-[var(--border-accent)] text-[var(--accent-gold)] font-serif-heading font-bold hover:bg-[var(--accent-gold)] hover:text-white text-xs flex items-center space-x-1.5 transition-all cursor-pointer"
                     >
@@ -1369,9 +1366,8 @@ export default function Home() {
                           <div className="flex items-center justify-between">
                             <span className="text-[10px] uppercase font-bold text-[var(--accent-gold)] font-serif-heading">Question {qIdx + 1} ({q.type})</span>
                             {showQuizExplanations[qIdx] && (
-                              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded ${
-                                quizResponses[qIdx] === q.answer ? "bg-emerald-500/15 text-emerald-600 border border-emerald-500/20" : "bg-red-500/15 text-red-600 border border-red-500/20"
-                              }`}>
+                              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded ${quizResponses[qIdx] === q.answer ? "bg-emerald-500/15 text-emerald-600 border border-emerald-500/20" : "bg-red-500/15 text-red-600 border border-red-500/20"
+                                }`}>
                                 {quizResponses[qIdx] === q.answer ? "Correct Answer" : "Incorrect Answer"}
                               </span>
                             )}
@@ -1382,12 +1378,11 @@ export default function Home() {
                           {q.type === "mcq" && q.options && (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                               {q.options.map((opt: string) => (
-                                <button 
+                                <button
                                   key={opt}
                                   onClick={() => checkAnswerQuiz(qIdx, opt)}
-                                  className={`px-4 py-2.5 rounded-xl border text-xs text-left font-semibold transition-all cursor-pointer font-academic-subheading ${
-                                    quizResponses[qIdx] === opt ? "bg-[var(--accent-maroon)] border-[var(--border-accent)] text-white" : "bg-[var(--bg-surface)] border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--accent-gold)]"
-                                  }`}
+                                  className={`px-4 py-2.5 rounded-xl border text-xs text-left font-semibold transition-all cursor-pointer font-academic-subheading ${quizResponses[qIdx] === opt ? "bg-[var(--accent-maroon)] border-[var(--border-accent)] text-white" : "bg-[var(--bg-surface)] border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--accent-gold)]"
+                                    }`}
                                 >
                                   {opt}
                                 </button>
@@ -1399,12 +1394,11 @@ export default function Home() {
                           {q.type === "true_false" && q.options && (
                             <div className="flex gap-4 pt-2">
                               {q.options.map((opt: string) => (
-                                <button 
+                                <button
                                   key={opt}
                                   onClick={() => checkAnswerQuiz(qIdx, opt)}
-                                  className={`px-6 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer font-academic-subheading ${
-                                    quizResponses[qIdx] === opt ? "bg-[var(--accent-maroon)] border-[var(--border-accent)] text-white" : "bg-[var(--bg-surface)] border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--accent-gold)]"
-                                  }`}
+                                  className={`px-6 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer font-academic-subheading ${quizResponses[qIdx] === opt ? "bg-[var(--accent-maroon)] border-[var(--border-accent)] text-white" : "bg-[var(--bg-surface)] border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--accent-gold)]"
+                                    }`}
                                 >
                                   {opt}
                                 </button>
@@ -1415,7 +1409,7 @@ export default function Home() {
                           {/* Coding / Short Answer Render */}
                           {["coding", "fill_in_blanks"].includes(q.type) && (
                             <div className="space-y-2 pt-2">
-                              <input 
+                              <input
                                 type="text"
                                 placeholder="Type your answer code/text..."
                                 onBlur={(e) => checkAnswerQuiz(qIdx, e.target.value)}
@@ -1442,8 +1436,8 @@ export default function Home() {
                 {studyToolTab === "viva" && (
                   <div key="tab-viva" className="animate-zoom-scroll grid grid-cols-1 md:grid-cols-2 gap-4 font-academic-subheading">
                     {generatedOutput.questions?.map((q: any, idx: number) => (
-                      <div 
-                        key={idx} 
+                      <div
+                        key={idx}
                         onClick={() => toggleVivaReveal(idx)}
                         className="p-5 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface-subtle)] cursor-pointer min-h-[140px] flex flex-col justify-between hover:border-[var(--accent-gold)] transition-all select-none shadow-sm"
                       >
@@ -1481,7 +1475,7 @@ export default function Home() {
             )}
             {bookmarks.map((bm) => (
               <div key={bm.id} className="academic-card p-6 rounded-2xl relative">
-                <button 
+                <button
                   onClick={() => handleDeleteBookmark(bm.id)}
                   className="absolute top-4 right-4 p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 transition-all cursor-pointer"
                 >
@@ -1518,7 +1512,7 @@ export default function Home() {
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {sessions.map((sess) => (
-                <div 
+                <div
                   key={sess}
                   onClick={() => {
                     setActiveSession(sess);
@@ -1579,9 +1573,8 @@ export default function Home() {
                       <td className="py-3.5 px-4">
                         <div className="flex flex-col">
                           <span className="font-semibold text-[var(--text-primary)]">{item.uploader_username || "System"}</span>
-                          <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${
-                            item.uploader_role === "admin" ? "text-[var(--accent-gold)]" : "text-slate-400"
-                          }`}>
+                          <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${item.uploader_role === "admin" ? "text-[var(--accent-gold)]" : "text-slate-400"
+                            }`}>
                             {item.uploader_role || "student"}
                           </span>
                         </div>
@@ -1590,7 +1583,7 @@ export default function Home() {
                       <td className="py-3.5 px-4">{item.semester || "—"}</td>
                       <td className="py-3.5 px-4">{new Date(item.created_at).toLocaleDateString()}</td>
                       <td className="py-3.5 px-4 flex items-center space-x-2">
-                        <button 
+                        <button
                           onClick={() => handleOpenDocument(item.id)}
                           className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-[var(--accent-gold-subtle)] text-[var(--accent-gold)] border border-[var(--border-accent)] hover:bg-[var(--accent-gold)] hover:text-white transition-all cursor-pointer shadow-xs font-serif-heading text-[11px] font-bold"
                           title="Open Document"
@@ -1598,13 +1591,13 @@ export default function Home() {
                           <Eye className="w-3.5 h-3.5" />
                           <span>Open</span>
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleApproveReject(item.id, "approve")}
                           className="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 font-serif-heading font-bold hover:bg-emerald-500/20 transition-all text-[11px] cursor-pointer"
                         >
                           Approve Upload
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleApproveReject(item.id, "reject")}
                           className="px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-serif-heading font-bold hover:bg-red-500/20 transition-all text-[11px] cursor-pointer"
                         >
