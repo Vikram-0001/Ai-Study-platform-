@@ -24,6 +24,18 @@ async function handleResponse(response: Response) {
     } catch {
       // ignore
     }
+    
+    // Auto-logout if token is invalid/expired (exclude login and signup requests)
+    if (response.status === 401 && !response.url.includes("/auth/login") && !response.url.includes("/auth/signup")) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        localStorage.removeItem("role");
+        alert("Your session has expired or is invalid. Please log in again.");
+        window.location.reload();
+      }
+    }
+    
     throw new Error(errorDetail);
   }
   return response.json();
