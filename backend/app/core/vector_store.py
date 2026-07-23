@@ -203,16 +203,38 @@ class VectorStore:
 
         return qmodels.Filter(must=must_conditions)
 
+    def clean_query_for_search(self, query_text: str) -> str:
+        stop_words = {"what", "is", "a", "the", "an", "and", "or", "in", "on", "at", "to", "for", "of", "with", "who", "where", "how", "why", "which", "this", "that", "these", "those"}
+        generic_request_words = {
+            "generate", "quiz", "mcq", "viva", "flashcard", "notes", "summary", 
+            "syllabus", "exam", "assignment", "explain", "compare", "create", 
+            "predict", "revision", "cheat", "roadmap", "why", "how", "what", 
+            "difference", "question", "questions", "test", "study", "plan", 
+            "document", "file", "slide", "slides", "lecture", "lectures", 
+            "chapter", "chapters", "course", "courses", "subject", "subjects", 
+            "unit", "units", "topic", "topics", "about", "on", "for", "with", 
+            "of", "in", "to", "and", "or", "a", "the", "an", "detail", "details", 
+            "definition", "definitions", "give", "me", "show"
+        }
+        words = [w.strip("?,.!") for w in query_text.lower().split()]
+        cleaned_words = [w for w in words if w and w not in stop_words and w not in generic_request_words]
+        if not cleaned_words:
+            cleaned_words = [w for w in words if w and w not in stop_words]
+        if not cleaned_words:
+            cleaned_words = words
+        return " ".join(cleaned_words)
+
     def search_keyword_bm25(self, query_text: str, user_id: int, role: str, limit: int = 10, filters: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
         """
         Keyword search implementation using Qdrant full-text filtering.
         """
+        cleaned_query = self.clean_query_for_search(query_text)
         rbac_filter = self.rbac_and_custom_filter(user_id, role, filters)
         
         # Add keyword text match check
         text_filter = qmodels.FieldCondition(
             key="text",
-            match=qmodels.MatchText(text=query_text)
+            match=qmodels.MatchText(text=cleaned_query)
         )
         
         # Combine filters
@@ -234,7 +256,7 @@ class VectorStore:
         )[0]
         
         # Scoring simulated on word intersection (BM25 surrogate for scrolling results)
-        query_words = set(query_text.lower().split())
+        query_words = set(cleaned_query.lower().split())
         scored_results = []
         for hit in results:
             payload = hit.payload or {}
@@ -277,7 +299,7 @@ class VectorStore:
             item_id = item["id"]
             rrf_scores[item_id] = rrf_scores.get(item_id, 0.0) + (1.0 / (k + rank + 1))
             items[item_id] = item
-
+ 
         # Sort combined results by RRF score
         sorted_ids = sorted(rrf_scores.keys(), key=lambda x: rrf_scores[x], reverse=True)
         
@@ -286,14 +308,15 @@ class VectorStore:
         # We simulate Cross-Encoder re-ranking by checking detailed keyword relevance + text length density
         # to boost items with cleaner syntactic alignment.
         re_ranked = []
+        cleaned_query = self.clean_query_for_search(query_text)
         for index, item_id in enumerate(sorted_ids[:limit*2]):
             item = items[item_id]
             # Cross encoder heuristic: calculate semantic density
             text = item.get("text", "").lower()
-            query_lower = query_text.lower()
+            query_lower = cleaned_query.lower()
             
             # Substring exact matches get a boost
-            exact_boost = 0.2 if query_lower in text else 0.0
+            exact_boost = 0.2 if query_lower and (query_lower in text) else 0.0
             
             # Final re-ranked score combining RRF index + heuristic density
             re_rank_score = rrf_scores[item_id] + exact_boost

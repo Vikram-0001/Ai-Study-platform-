@@ -9,22 +9,54 @@ class DocumentParser:
         """
         Parses different file formats into content pages/segments.
         Each page contains raw text content and the respective page index.
+        Handles both local paths and remote URLs (downloads remote files to temporary storage).
         """
-        file_type = file_type.lower()
-        if file_type == "pdf":
-            return self._parse_pdf(file_path)
-        elif file_type == "pptx":
-            return self._parse_pptx(file_path)
-        elif file_type in ["docx", "doc"]:
-            return self._parse_docx(file_path)
-        elif file_type in ["txt", "md"]:
-            return self._parse_txt(file_path)
-        else:
-            # Fallback to general text extraction attempts
+        import tempfile
+        import httpx
+        
+        is_url = file_path.startswith("http://") or file_path.startswith("https://")
+        temp_file_path = file_path
+        
+        if is_url:
             try:
-                return self._parse_txt(file_path)
-            except Exception:
-                raise ValueError(f"Unsupported file format extension: {file_type}")
+                suffix = f".{file_type.lower()}"
+                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+                    temp_file_path = temp_file.name
+                    with httpx.Client() as client:
+                        response = client.get(file_path)
+                        if response.status_code == 200:
+                            temp_file.write(response.content)
+                        else:
+                            raise ValueError(f"Failed to download remote file from {file_path}, status: {response.status_code}")
+            except Exception as e:
+                print(f"Error downloading remote file {file_path}: {e}")
+                # clean up temp file if created
+                if temp_file_path != file_path and os.path.exists(temp_file_path):
+                    import os
+                    os.remove(temp_file_path)
+                return []
+                
+        try:
+            file_type = file_type.lower()
+            if file_type == "pdf":
+                pages = self._parse_pdf(temp_file_path)
+            elif file_type == "pptx":
+                pages = self._parse_pptx(temp_file_path)
+            elif file_type in ["docx", "doc"]:
+                pages = self._parse_docx(temp_file_path)
+            elif file_type in ["txt", "md"]:
+                pages = self._parse_txt(temp_file_path)
+            else:
+                try:
+                    pages = self._parse_txt(temp_file_path)
+                except Exception:
+                    raise ValueError(f"Unsupported file format extension: {file_type}")
+        finally:
+            if is_url and temp_file_path != file_path and os.path.exists(temp_file_path):
+                import os
+                os.remove(temp_file_path)
+                
+        return pages
 
     def _parse_pdf(self, file_path: str) -> List[Dict[str, Any]]:
         pages = []

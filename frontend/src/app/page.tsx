@@ -295,17 +295,21 @@ export default function Home() {
   const handleUploadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!uploadFile) return;
+    if (!uploadDept.trim() || !uploadSem.toString().trim() || !uploadSubject.trim() || !uploadUnit.trim() || !uploadTopic.trim()) {
+      alert("Please fill in all target metadata fields (Department, Semester, Subject, Unit, Topic) before uploading.");
+      return;
+    }
     setUploadProgress("Uploading and parsing document chunks...");
     setIsProcessing(true);
 
     const formData = new FormData();
     formData.append("file", uploadFile);
     formData.append("visibility", user?.role === "admin" ? "global" : uploadVisibility);
-    if (uploadDept) formData.append("department", uploadDept);
-    if (uploadSem) formData.append("semester", uploadSem);
-    if (uploadSubject) formData.append("subject", uploadSubject);
-    if (uploadUnit) formData.append("unit", uploadUnit);
-    if (uploadTopic) formData.append("topic", uploadTopic);
+    formData.append("department", uploadDept);
+    formData.append("semester", uploadSem);
+    formData.append("subject", uploadSubject);
+    formData.append("unit", uploadUnit);
+    formData.append("topic", uploadTopic);
 
     try {
       await api.documents.upload(formData);
@@ -1078,7 +1082,9 @@ export default function Home() {
 
               <form onSubmit={handleUploadSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-3">
-                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Select Academic File (PDF, PPTX, DOCX, TXT)</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">
+                    Select Academic File (PDF, PPTX, DOCX, TXT) <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <div className="border-2 border-dashed border-[var(--border-color)] hover:border-[var(--accent-gold)] rounded-xl p-5 flex flex-col items-center justify-center bg-[var(--bg-surface-subtle)] transition-all cursor-pointer relative">
                     <input
                       type="file"
@@ -1113,57 +1119,72 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Department Target</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">
+                    Department Target <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <input
                     type="text"
                     value={uploadDept}
                     onChange={(e) => setUploadDept(e.target.value)}
                     placeholder="E.g. CSE"
                     className="w-full px-3 py-2 academic-input text-xs font-academic-subheading"
+                    required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Semester</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">
+                    Semester <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <input
                     type="number"
                     value={uploadSem}
                     onChange={(e) => setUploadSem(e.target.value)}
                     placeholder="E.g. 4"
                     className="w-full px-3 py-2 academic-input text-xs font-academic-subheading"
+                    required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Subject Tag</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">
+                    Subject Tag <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <input
                     type="text"
                     value={uploadSubject}
                     onChange={(e) => setUploadSubject(e.target.value)}
                     placeholder="E.g. Operating Systems"
                     className="w-full px-3 py-2 academic-input text-xs font-academic-subheading"
+                    required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Unit</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">
+                    Unit <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <input
                     type="text"
                     value={uploadUnit}
                     onChange={(e) => setUploadUnit(e.target.value)}
                     placeholder="E.g. Unit 3"
                     className="w-full px-3 py-2 academic-input text-xs font-academic-subheading"
+                    required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">Topic Target</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 font-academic-subheading">
+                    Topic Target <span className="text-red-500 ml-1">*</span>
+                  </label>
                   <input
                     type="text"
                     value={uploadTopic}
                     onChange={(e) => setUploadTopic(e.target.value)}
                     placeholder="E.g. Process Scheduling"
                     className="w-full px-3 py-2 academic-input text-xs font-academic-subheading"
+                    required
                   />
                 </div>
 

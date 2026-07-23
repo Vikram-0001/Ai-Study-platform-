@@ -23,11 +23,11 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 async def upload_document(
     file: UploadFile = File(...),
     visibility: str = Form("private"),  # 'private', 'community', or 'global'
-    department: Optional[str] = Form(None),
-    semester: Optional[int] = Form(None),
-    subject: Optional[str] = Form(None),
-    unit: Optional[str] = Form(None),
-    topic: Optional[str] = Form(None),
+    department: str = Form(...),
+    semester: int = Form(...),
+    subject: str = Form(...),
+    unit: str = Form(...),
+    topic: str = Form(...),
     db: Session = Depends(get_db),
     user_payload: dict = Depends(get_current_user_payload)
 ):

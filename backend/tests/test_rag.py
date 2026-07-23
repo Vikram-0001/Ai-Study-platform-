@@ -56,3 +56,16 @@ def test_decision_agent_heuristics():
 
     compare_dec = decision_agent.classify_intent("Compare Merge Sort and Quick Sort algorithms")
     assert compare_dec["requires_llm"] is True
+
+
+def test_query_cleaning_logic():
+    # clean_query_for_search should strip generic words and stop words
+    cleaned = vector_store.clean_query_for_search("generate quiz on DBMS")
+    assert cleaned == "dbms"
+
+    cleaned_mixed = vector_store.clean_query_for_search("what is normalization in DBMS?")
+    assert cleaned_mixed == "normalization dbms"
+
+    # If only stop/generic words are present, it falls back to non-stop words
+    cleaned_fallback = vector_store.clean_query_for_search("generate a quiz")
+    assert cleaned_fallback == "generate quiz"
