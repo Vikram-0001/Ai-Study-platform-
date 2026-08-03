@@ -4,7 +4,8 @@ A production-grade, AI-powered study platform designed for university classrooms
 
 The architecture is built on a **RAG-First, LLM-Second** philosophy: factual queries are resolved directly via vector and full-text keyword indices (bypassing LLM generation), engaging GPT-4o only when comparison, synthesis, or evaluation is requested.
 
----
+-------
+
 
 ## 🏗️ Core Architecture & Pipeline
 
